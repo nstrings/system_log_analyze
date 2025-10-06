@@ -2,6 +2,17 @@
 
 Interactive **Streamlit** UI + CLI tool to analyze system/application logs.
 
+## Screenshots
+
+### Streamlit UI - Dashboard
+![Dashboard Screenshot](docs/screenshots/dashboard.png)
+
+### Streamlit UI - Presets Example
+![Presets Screenshot](docs/screenshots/presets.png)
+
+### CLI Example - Markdown Export
+![CLI Screenshot](docs/screenshots/cli.png)
+
 - macOS: analyze `log show` exports
 - Windows: analyze `Get-WinEvent` exports
 - Presets for Networking, Security, Windows (DNS/SCM/Schannel/GPO)
