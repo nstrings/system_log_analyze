@@ -370,6 +370,59 @@ def streamlit_ui():
         sev_df = sev_df.sort_values("count", ascending=False)
         st.subheader("Severity Summary")
         st.bar_chart(sev_df.set_index("severity"))
+
+        # Severity Pie Chart (Final Fix – adaptive labels with leader lines)
+        if not sev_df.empty:
+            import matplotlib.pyplot as plt
+            from matplotlib.animation import FuncAnimation
+            import numpy as np
+
+            custom_colors = ["#84949f", '#ff7f0e', "#e44100"]  # blue, orange, green
+
+            plt.style.use('dark_background')
+            fig, ax = plt.subplots(figsize=(5, 5), facecolor='none')
+            ax.axis('equal')
+
+            total = sev_df['count'].sum()
+            fractions = sev_df['count'] / total
+
+            # Helper function for label positioning
+            def autopct_generator(limit):
+                """Hide labels for very small slices."""
+                def inner_autopct(pct):
+                    return f'{pct:.1f}%' if pct > limit else ''
+                return inner_autopct
+
+            def animate(i):
+                ax.clear()
+                ax.axis('equal')
+                wedges, texts, autotexts = ax.pie(
+                    sev_df['count'],
+                    labels=sev_df['severity'],
+                    autopct=autopct_generator(1),  # Hide below 1%
+                    startangle=90,
+                    colors=custom_colors[:len(sev_df)],
+                    pctdistance=0.75,
+                    labeldistance=1.25,  # move labels outward
+                    wedgeprops={'linewidth': 1, 'edgecolor': 'black'},
+                    textprops={'color': 'white', 'fontsize': 12},
+                )
+
+                # Add leader lines for outside labels
+                for w in wedges:
+                    w.set_linewidth(0.5)
+                    w.set_edgecolor('black')
+
+                for text in texts + autotexts:
+                    text.set_color('white')
+                    text.set_fontsize(12)
+
+            # Animate and display
+            anim = FuncAnimation(fig, animate, frames=np.arange(1, 11), interval=80, repeat=False)
+            animate(10)
+
+            st.pyplot(fig, use_container_width=True)
+            
     else:
         st.subheader("Severity Summary")
         st.caption("No matching severities for the current preset/time filters.")
